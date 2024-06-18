@@ -1,0 +1,42 @@
+
+services:
+  db: 
+    image: mysql
+    container_name: api_with_docker
+    restart: always
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    networks: 
+      - dev
+  
+  phpmyadmin: 
+    image: phpmyadmin
+    container_name: db_phpmyadmin
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - 8000:80
+    environment:
+       PMA_HOST: db
+    networks:
+      - dev
+  
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - ./www:/var/www/html
+    depends_on:
+      - db
+    
+networks:
+    dev: 
+
+volumes:
+    db-data:
+
+ 
